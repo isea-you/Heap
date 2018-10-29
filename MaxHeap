@@ -1,0 +1,85 @@
+package com.data_structure.max_heap;
+
+public class MaxHeap<E extends Comparable<E>>{
+    private Array<E> data;
+
+    public MaxHeap(int capacity){
+        data = new Array<>(capacity);
+    }
+
+    public MaxHeap(){
+        data = new Array<>();
+    }
+
+    public int getSize(){
+        return data.getSize();
+    }
+
+    public boolean isEmpty(){
+        return data.isEmpty();
+    }
+
+//    获取当前节点父节点所在的索引
+    public int parentIndex(int index){
+        if (index < 0){
+            throw new IllegalArgumentException("Index is illegal...");
+        }
+        return (index - 1) / 2;
+    }
+
+//    获取当前节点左孩子所在的索引
+    public int leftChildIndex(int index){
+        return index * 2 + 1;
+    }
+
+//    获取当前节点右孩子所在的索引
+    public int rightChildIndex(int index){
+        return index * 2 + 2;
+    }
+
+//    向堆中添加元素
+    public void add(E e){
+        data.addFirst(e);
+        siftUp(data.getSize() - 1);
+    }
+
+    private void siftUp(int k){
+        while(k > 0 && data.get(k).compareTo(data.get(parentIndex(k))) > 0){
+            data.swap(k,parentIndex(k));
+            k = parentIndex(k);
+        }
+    }
+
+//    取出堆中最大的元素
+    public E findMax(){
+        if (data.isEmpty()){
+            throw new IllegalArgumentException("The heap is empty...");
+        }
+        return data.get(0);
+    }
+
+//    取出堆中最大的元素
+    public E exactMax(){
+        E max = findMax();
+        data.swap(0,data.getSize() - 1);
+        data.removeLast();
+        siftDown(0);    
+        return max;
+    }
+
+    private void siftDown(int k) {
+        while(leftChildIndex(k) < data.getSize()){
+            int j = leftChildIndex(k);
+            if (rightChildIndex(k) < data.getSize() && data.get(j + 1).compareTo(data.get(j)) > 0){
+                j ++;
+//                此时，j对应的值是k的左右孩子中最大的元素
+            }
+
+            if (data.get(k).compareTo(data.get(j)) >= 0){
+                break;
+            }
+            data.swap(k,j);
+            k = j;
+        }
+    }
+}
